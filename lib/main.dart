@@ -95,6 +95,7 @@ void main() async {
     date: '10/10/2020',
     startTime: '09:00',
     endTime: '10:00',
+    status: 'Pendente',
   );
 
   var schedule2 = const MedicalSchedule(
@@ -104,6 +105,7 @@ void main() async {
     date: '10/10/2020',
     startTime: '09:00',
     endTime: '10:00',
+    status: 'Pendente',
   );
 
   await ClinicaDatabase.instance.insertMedicalSchedule(schedule);

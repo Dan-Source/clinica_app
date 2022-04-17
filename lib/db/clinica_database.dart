@@ -147,6 +147,7 @@ class ClinicaDatabase {
         date: maps[i]['date'],
         startTime: maps[i]['startTime'],
         endTime: maps[i]['endTime'],
+        status: maps[i]['status'],
       );
     });
   }
