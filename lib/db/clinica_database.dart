@@ -35,6 +35,7 @@ class ClinicaDatabase {
     final textType = 'TEXT NOT NULL';
     final integerType = 'INTEGER NOT NULL';
     final integerTypeNull = 'INTEGER';
+    final foreignKeyType = 'FOREIGN KEY';
 
     await db.execute('''
       CREATE TABLE $doctorEspecialityTable (
@@ -49,7 +50,8 @@ class ClinicaDatabase {
         ${DoctorFields.crm} $textType,
         ${DoctorFields.email} $textType,
         ${DoctorFields.phone} $textType,
-        ${DoctorFields.especialityId} $integerType
+        ${DoctorFields.especialityId} $integerType,
+        $foreignKeyType (${DoctorFields.especialityId}, $doctorEspecialityTable(${DoctorFields.especialityId}))
       )
     ''',);
     await db.execute('''
@@ -86,7 +88,7 @@ class ClinicaDatabase {
   Future<void> insertDoctor(Doctor doctor) async {
     final Database db = await instance.database;
     await db.insert(
-      'doctor',
+      doctorTable,
       doctor.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -95,7 +97,7 @@ class ClinicaDatabase {
   Future<void> insertMedicalSchedule(MedicalSchedule medicalSchedule) async {
     final Database db = await instance.database;
     await db.insert(
-      'medical_schedule',
+      medicalScheduleTable,
       medicalSchedule.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -104,15 +106,37 @@ class ClinicaDatabase {
   Future<void> insertPatient(Patient patient) async {
     final Database db = await instance.database;
     await db.insert(
-      'patient',
+      patientTable,
       patient.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
+  Future<DoctorEspeciality> fetchDoctorEspeciality(int id) async {
+    final Database db = await instance.database;
+    final List<Map> maps = await db.query(
+      doctorEspecialityTable,
+      where: '${DoctorEspecialityFields.id} = ?',
+      whereArgs: [id],
+    );
+    DoctorEspeciality especiality = DoctorEspeciality.fromMap(maps[0]);
+    return especiality;
+  }
+
+  Future<MedicalSchedule> fetchMedicalSchedule(int id) async {
+    final Database db = await instance.database;
+    final List<Map> maps = await db.query(
+      medicalScheduleTable,
+      where: '${MedicalScheduleFields.id} = ?',
+      whereArgs: [id],
+    );
+    MedicalSchedule medicalSchedule = MedicalSchedule.fromMap(maps[0]);
+    return medicalSchedule;
+  }
+
   Future<List<DoctorEspeciality>> doctorEspecialities() async {
     final Database db = await instance.database;
-    final List<Map<String, dynamic>> maps = await db.query('doctor_especiality');
+    final List<Map<String, dynamic>> maps = await db.query(doctorEspecialityTable);
     return List.generate(maps.length, (i) {
       return DoctorEspeciality(
         id: maps[i]['id'],
@@ -123,7 +147,7 @@ class ClinicaDatabase {
 
   Future<List<Doctor>> doctors() async {
     final Database db = await instance.database;
-    final List<Map<String, dynamic>> maps = await db.query('doctor');
+    final List<Map<String, dynamic>> maps = await db.query(doctorTable);
     return List.generate(maps.length, (i) {
       return Doctor(
         id: maps[i]['id'],
@@ -138,7 +162,7 @@ class ClinicaDatabase {
 
   Future<List<MedicalSchedule>> medicalSchedules() async {
     final Database db = await instance.database;
-    final List<Map<String, dynamic>> maps = await db.query('medical_schedule');
+    final List<Map<String, dynamic>> maps = await db.query(medicalScheduleTable);
     return List.generate(maps.length, (i) {
       return MedicalSchedule(
         id: maps[i]['id'],
@@ -147,13 +171,14 @@ class ClinicaDatabase {
         date: maps[i]['date'],
         startTime: maps[i]['startTime'],
         endTime: maps[i]['endTime'],
+        status: maps[i]['status'],
       );
     });
   }
 
   Future<List<Patient>> patients() async {
     final Database db = await instance.database;
-    final List<Map<String, dynamic>> maps = await db.query('patient');
+    final List<Map<String, dynamic>> maps = await db.query(patientTable);
     return List.generate(maps.length, (i) {
       return Patient(
         id: maps[i]['id'],
@@ -175,10 +200,67 @@ class ClinicaDatabase {
     );
   }
 
+  Future<void> updateDoctor(Doctor doctor)  async {
+    final db = await database;
+    await db.update(
+      'doctor',
+      doctor.toMap(),
+      where: "id = ?",
+      whereArgs: [doctor.id],
+    );
+  }
+
+  Future<void> updateMedicalSchedule(MedicalSchedule medicalSchedule) async {
+    final db = await database;
+    await db.update(
+      'medical_schedule',
+      medicalSchedule.toMap(),
+      where: "id = ?",
+      whereArgs: [medicalSchedule.id],
+    );
+  }
+
+  Future<void> updatePatient(Patient patient) async {
+    final db = await database;
+    await db.update(
+      'patient',
+      patient.toMap(),
+      where: "id = ?",
+      whereArgs: [patient.id],
+    );
+  }
+
   Future<void> deleteDoctorEspeciality(int id) async {
     final db = await database;
     await db.delete(
-      'doctor_especiality',
+      doctorEspecialityTable,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> deleteDoctor(int id) async {
+    final db = await database;
+    await db.delete(
+      doctorTable,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> deleteMedicalSchedule(int id) async {
+    final db = await database;
+    await db.delete(
+      medicalScheduleTable,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> deletePatient(int id) async {
+    final db = await database;
+    await db.delete(
+      patientTable,
       where: "id = ?",
       whereArgs: [id],
     );

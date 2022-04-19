@@ -29,6 +29,7 @@ class MedicalSchedule {
   final String date;
   final String startTime;
   final String endTime;
+  final String status;
 
   const MedicalSchedule({
     required this.id,
@@ -37,6 +38,7 @@ class MedicalSchedule {
     required this.date,
     required this.startTime,
     required this.endTime,
+    required this.status,
   });
 
   Map<String, dynamic> toMap() {
@@ -47,11 +49,24 @@ class MedicalSchedule {
       'date': date,
       'startTime': startTime,
       'endTime': endTime,
+      'status': status,
     };
+  }
+
+  static MedicalSchedule fromMap(Map map) {
+    return MedicalSchedule(
+      id: map['id'],
+      doctorId: map['doctorId'],
+      patientId: map['patientId'],
+      date: map['date'],
+      startTime: map['startTime'],
+      endTime: map['endTime'],
+      status: map['status'],
+    );
   }
 
   @override
   String toString() {
-    return 'MedicalSchedule{id: $id, doctorId: $doctorId, patientId: $patientId, date: $date, startTime: $startTime, endTime: $endTime}';
+    return 'MedicalSchedule{id: $id, doctorId: $doctorId, patientId: $patientId, date: $date, startTime: $startTime, endTime: $endTime, status: $status}';
   }
 }
