@@ -95,7 +95,7 @@ void main() async {
     date: '10/10/2020',
     startTime: '09:00',
     endTime: '10:00',
-    status: 'Pendente',
+    status: 'Concluida',
   );
 
   var schedule2 = const MedicalSchedule(
@@ -112,4 +112,21 @@ void main() async {
   await ClinicaDatabase.instance.insertMedicalSchedule(schedule2);
   print(await ClinicaDatabase.instance.medicalSchedules());
 
+  var scheduleUpdated = const MedicalSchedule(
+    id: 1,
+    doctorId: 1,
+    patientId: 1,
+    date: '10/10/2020',
+    startTime: '10:00',
+    endTime: '10:00',
+    status: 'Concluida',
+  );
+
+  await ClinicaDatabase.instance.updateMedicalSchedule(scheduleUpdated);
+
+  // print(await ClinicaDatabase.instance.medicalSchedules());
+
+  // print(await ClinicaDatabase.instance.fetchDoctorEspeciality(2));
+
+  print(await ClinicaDatabase.instance.fetchMedicalSchedule(1));
 }

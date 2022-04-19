@@ -35,6 +35,7 @@ class ClinicaDatabase {
     final textType = 'TEXT NOT NULL';
     final integerType = 'INTEGER NOT NULL';
     final integerTypeNull = 'INTEGER';
+    final foreignKeyType = 'FOREIGN KEY';
 
     await db.execute('''
       CREATE TABLE $doctorEspecialityTable (
@@ -49,7 +50,8 @@ class ClinicaDatabase {
         ${DoctorFields.crm} $textType,
         ${DoctorFields.email} $textType,
         ${DoctorFields.phone} $textType,
-        ${DoctorFields.especialityId} $integerType
+        ${DoctorFields.especialityId} $integerType,
+        $foreignKeyType (${DoctorFields.especialityId}, $doctorEspecialityTable(${DoctorFields.especialityId}))
       )
     ''',);
     await db.execute('''
@@ -108,6 +110,28 @@ class ClinicaDatabase {
       patient.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+  }
+
+  Future<DoctorEspeciality> fetchDoctorEspeciality(int id) async {
+    final Database db = await instance.database;
+    final List<Map> maps = await db.query(
+      doctorEspecialityTable,
+      where: '${DoctorEspecialityFields.id} = ?',
+      whereArgs: [id],
+    );
+    DoctorEspeciality especiality = DoctorEspeciality.fromMap(maps[0]);
+    return especiality;
+  }
+
+  Future<MedicalSchedule> fetchMedicalSchedule(int id) async {
+    final Database db = await instance.database;
+    final List<Map> maps = await db.query(
+      medicalScheduleTable,
+      where: '${MedicalScheduleFields.id} = ?',
+      whereArgs: [id],
+    );
+    MedicalSchedule medicalSchedule = MedicalSchedule.fromMap(maps[0]);
+    return medicalSchedule;
   }
 
   Future<List<DoctorEspeciality>> doctorEspecialities() async {

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 final String doctorEspecialityTable = 'doctor_especiality';
 
 class DoctorEspecialityFields {
@@ -23,6 +25,13 @@ class DoctorEspeciality {
       'id': id,
       'name': name,
     };
+  }
+
+  static DoctorEspeciality fromMap(Map map) {
+    return DoctorEspeciality(
+      id: map['id'],
+      name: map['name'],
+    );
   }
 
   @override
