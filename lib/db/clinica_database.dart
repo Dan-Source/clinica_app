@@ -15,7 +15,7 @@ class ClinicaDatabase {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDatabase('clinica_teste4.db');
+    _database = await _initDatabase('clinica_teste5.db');
     return _database!;
   }
 
@@ -51,7 +51,7 @@ class ClinicaDatabase {
         ${DoctorFields.email} $textType,
         ${DoctorFields.phone} $textType,
         ${DoctorFields.especialityId} $integerType,
-        $foreignKeyType (${DoctorFields.especialityId}, $doctorEspecialityTable(${DoctorFields.especialityId}))
+        $foreignKeyType (${DoctorFields.especialityId}) REFERENCES $doctorEspecialityTable(${DoctorFields.especialityId})
       )
     ''',);
     await db.execute('''
